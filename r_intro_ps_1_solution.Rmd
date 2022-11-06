@@ -1,7 +1,7 @@
 ---
-title: "r_intro PS 1"
+title: "r_intro PS 1 solutions"
 author: "Nicholus Tint Zaw"
-date: "2022-10-31"
+date: "2022-11-06"
 output: pdf_document
 ---
 
@@ -9,6 +9,8 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+\newcommand{\ansbegin}{\smallbreak\vspace{-8pt}\hrulefill \smallbreak\noindent {\sl Answer\/}:\enspace\ignorespaces}
+\newcommand{\ansend}{\smallbreak\hrulefill \smallbreak\vspace{-8pt}}
 
 
 # Exploring the Central Limit Theorem 
@@ -67,6 +69,30 @@ OK. Now, we are landing on the actual problem set question. We will test the cla
 + Compare the `pop_mean` and `sample_mean`, and explain what you observed. 
 + Before moving to test the sampling distribution of means, please plot the `Sepal.Length` as a histogram plot and observe its distribution. Is it normal distribution? Please explain your answer. 
 
+\ansbegin
+
+```{r df}
+# load iris 
+df <- iris 
+
+# mean calculation 
+pop_mean <- mean(df$Sepal.Length)
+
+set.seed(3432)
+sample_mean <- mean(sample(df$Sepal.Length, 30))
+
+# compare the two means
+c(pop_mean, sample_mean)
+pop_mean - sample_mean
+
+```
+
+```{r hist, echo=FALSE, fig.cap = "Sepal Length Distribution", out.width = "80%", fig.align = "center"}
+hist(df$Sepal.Length)
+```
+Not normal, left skewed. 
+
+\ansend
 
 
 Finally, we are going to implement the sampling distribution of the means. 
@@ -81,6 +107,36 @@ Repeat the same process from numbers 1 to 4, but using different sample size and
 + for `means_list_2`, using a sample size 30 and replication time 200. Save its mean value as `means_clt_2`. 
 + for `means_list_3`, using a sample size 50 and replication time 1,000. Save its mean value as `means_clt_3`. 
 
+\ansbegin 
+
+```{r replicate}
+set.seed(2435)
+means_list_1 <- replicate(n = 100, 
+                          expr = mean(
+                            sample(df$Sepal.Length, 
+                                   size = 10, 
+                                   replace=TRUE)))
+
+
+means_list_2 <- replicate(n = 200, 
+                          expr = mean(
+                            sample(df$Sepal.Length, 
+                                   size = 30, 
+                                   replace=TRUE)))
+
+
+means_list_3 <- replicate(n = 1000, 
+                          expr = mean(
+                            sample(df$Sepal.Length, 
+                                   size = 50, 
+                                   replace=TRUE)))
+
+
+```
+
+
+\ansend
+
 
 Compare the 4 histograms and 4 different mean values and explain whether or not the CLT's claims are working well. 
 
@@ -92,3 +148,31 @@ What I mean by 4 is the histograms and mean values from the following 4 distribu
 4. `means_list_3` 
 
 
+\ansbegin
+
+```{r compare}
+
+means_compare <- c("population mean" = pop_mean, 
+                   "means_list_1" = mean(means_list_1), 
+                   "means_list_2" = mean(means_list_2), 
+                   "means_list_3" = mean(means_list_3))
+means_compare
+
+```
+
+
+```{r histcompare, echo=FALSE, fig.cap = "Sepal Length Comparisions", out.width = "80%", fig.align = "center"}
+
+layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE))
+
+hist(df$Sepal.Length)
+hist(means_list_1)
+hist(means_list_2)
+hist(means_list_3)
+
+
+```
+
+
+
+\ansend
